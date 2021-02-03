@@ -1,9 +1,10 @@
 import subprocess
 import rich
 from gitsane.config import config
+import sys
 
 
-def run(cmd, *args, **kwargs) -> subprocess.CompletedProcess:
+def run(cmd, exit_on_error=True, capture=False, **kwargs) -> subprocess.CompletedProcess:
     if "dry_run" in kwargs:
         dry_run = kwargs["dry_run"]
         del kwargs["dry_run"]
@@ -13,8 +14,7 @@ def run(cmd, *args, **kwargs) -> subprocess.CompletedProcess:
     if not "check" in kwargs:
         kwargs["check"] = True
 
-    if kwargs.get("capture"):
-        del kwargs["capture"]
+    if capture:
         kwargs["stdout"] = subprocess.PIPE
         kwargs["stderr"] = subprocess.STDOUT
 
@@ -25,4 +25,9 @@ def run(cmd, *args, **kwargs) -> subprocess.CompletedProcess:
         rich.print(f"""[bold purple]> [/]{" ".join(cmd)} (dry run)""")
     else:
         rich.print(f"""[bold purple]> [/]{" ".join(cmd)}""")
-        return subprocess.run(cmd, *args, **kwargs)
+        try:
+            return subprocess.run(cmd, **kwargs)
+        except subprocess.CalledProcessError as e:
+            if exit_on_error:
+                sys.exit(e.returncode)
+            raise e
