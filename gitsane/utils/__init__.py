@@ -1,7 +1,15 @@
 import subprocess
 import rich
 from gitsane.config import config
+import typer
+from typing import List
 import sys
+
+
+def add_typer_with_aliases(parent: typer.Typer, child: typer.Typer, name: str, aliases: List[str], **kwargs):
+    parent.add_typer(child, **kwargs, name=name)
+    for alias in aliases:
+        parent.add_typer(child, **kwargs, name=alias, hidden=True)
 
 
 def run(cmd, exit_on_error=True, capture=False, **kwargs) -> subprocess.CompletedProcess:
