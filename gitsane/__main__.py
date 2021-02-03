@@ -82,7 +82,7 @@ def git_log(verbose: bool = typer.Option(False, help="show commit message, date 
     if verbose:
         run(["git", "log"])
     else:
-        run(["git", "--pretty=oneline", "log"])
+        run(["git", "log", "--pretty=oneline", "--abbrev-commit"])
 
 
 def main():
