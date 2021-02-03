@@ -1,6 +1,6 @@
 from typing import Optional
 import typer
-from gitsane.utils import run
+from gitsane.utils import run, add_typer_with_aliases
 
 
 def callback():
@@ -37,32 +37,32 @@ def branch_push(branch: str = typer.Argument(..., help="branch to push"),
     run(cmd)
 
 
-@app.command(name="new", no_args_is_help=True)
-def branch_new(branch: str = typer.Argument(..., help="name of new branch"),
-               remote: Optional[str] = typer.Argument(None, help="remote"),
-               from_branch: Optional[str] = typer.Argument(None, help="(if provided) name of branch on remote")):
-    """create new branch from current or some remote branch.
+fork = typer.Typer(no_args_is_help=True)
 
-    \b
-    * `gitsane branch new <branch>`
-        * create branch `new` from current branch
-    * `gitsane branch new <branch> <remote>`
-        * checkout branch <branch> from remote <remote> to <branch>
-    * `gitsane branch new branch remote <from-branch>`
-        * checkout branch <from-branch> from remote <remote> to <branch>
 
-    NOTE: to create a branch from another local branch, see `gitsane branch cp <old> <new>`"""
-    if remote:
-        run(["git", "checkout", "-b", branch, f"{remote}/{from_branch or branch}"])
+@fork.command(name="local", no_args_is_help=True)
+def branch_fork_local(branch: str = typer.Argument(..., help="name of new branch"),
+                      source: Optional[str] = typer.Argument(None, help="branch to fork from (default: current branch)")):
+    """create branch from local branch"""
+    if source:
+        run(["git", "checkout", "-b", branch, source])
     else:
         run(["git", "checkout", "-b", branch])
 
 
-@app.command(name="fork", no_args_is_help=True)
-def branch_fork(source: str = typer.Argument(..., help="name of existing branch or tag"),
-                name: str = typer.Argument(..., help="name of new branch")):
-    """create new branch from (different, not current) existing branch"""
-    run(["git", "checkout", "-b", name, source])
+@fork.command(name="remote", no_args_is_help=True)
+def branch_fork_remote(branch: str = typer.Argument(..., help="name of new branch"),
+                       remote: str = typer.Argument(..., help="remote containing the branch"),
+                       from_branch: Optional[str] = typer.Argument(None, help="name of remote branch to clone (default: same as BRANCH)")):
+    """create branch from remote branch (checkout remote branch)"""
+    run(["git", "checkout", "-b", branch, f"{remote}/{from_branch or branch}"])
+
+
+add_typer_with_aliases(app, fork, name="fork", aliases=["f"], help="""\
+create new branch from existing local or remote branch.
+
+`fork` commands handle those variants of `git checkout` which create new local
+branches from either local- or remote branches.""")
 
 
 @app.command(name="checkout", no_args_is_help=True)
