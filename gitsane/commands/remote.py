@@ -32,3 +32,12 @@ def remote_rename(remote: str = typer.Argument(..., help="name of existing remot
     """change the name used to refer to remote"""
     """rename remote (remote rename <remote> <new-name>)"""
     run(["git", "remote", "rename", remote, new])
+
+
+@app.command(name="fetch")
+def remote_fetch(remote: str = typer.Argument(None, help="name of remote to fetch from (all if omitted)")):
+    """fetch (but do not apply) changes from remote"""
+    if remote:
+        run(["git", "fetch", remote])
+    else:
+        run(["git", "fetch", "--all"])
