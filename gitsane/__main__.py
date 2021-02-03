@@ -7,7 +7,7 @@ import gitsane.commands.tags
 import gitsane.commands.commit
 import gitsane.commands.remote
 from gitsane.config import config
-from gitsane.utils import run, add_typer_with_alias
+from gitsane.utils import run, add_typer_with_alias, command
 
 
 app = typer.Typer(no_args_is_help=True)
@@ -76,7 +76,7 @@ def git_clone(
     run(cmd)
 
 
-@app.command(name="log")
+@command(app, name="log", alias="l")
 def git_log(verbose: bool = typer.Option(False, help="show commit message, date and so on")):
     """display commit log"""
     if verbose:
