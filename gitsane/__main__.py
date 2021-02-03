@@ -7,45 +7,45 @@ import gitsane.commands.tags
 import gitsane.commands.commit
 import gitsane.commands.remote
 from gitsane.config import config
-from gitsane.utils import run, add_typer_with_aliases
+from gitsane.utils import run, add_typer_with_alias
 
 
 app = typer.Typer(no_args_is_help=True)
-add_typer_with_aliases(
+add_typer_with_alias(
     app,
     gitsane.commands.branch.app,
     name="branch",
-    aliases=["b"],
+    alias="b",
     help="manage branches")
 
-add_typer_with_aliases(
+add_typer_with_alias(
     app,
     gitsane.commands.remote.app,
     name="remote",
-    aliases=["r"],
+    alias="r",
     help="manage remotes")
 
-add_typer_with_aliases(
+add_typer_with_alias(
     app,
     gitsane.commands.stash.app,
     name="stash",
-    aliases=["s"],
+    alias="s",
     help="manage stashes")
 
 
-add_typer_with_aliases(
+add_typer_with_alias(
     app,
     gitsane.commands.tags.app,
     name="tags",
-    aliases=["t"],
+    alias="t",
     help="manage tags")
 
 
-add_typer_with_aliases(
+add_typer_with_alias(
     app,
     gitsane.commands.commit.app,
     name="commit",
-    aliases=["c"],
+    alias="c",
     help="mangle commits")
 
 
